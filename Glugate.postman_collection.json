@@ -1,0 +1,462 @@
+{
+	"info": {
+		"_postman_id": "3aedc622-8cdf-49c9-bd63-b3710fdad956",
+		"name": "Glugate",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "g_users",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ad45b395-a242-4461-a512-bc7b1a189459",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"/*pm.test(\"response is reasonable fast\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});*/",
+									"",
+									"",
+									"pm.test(\"Returns user token\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.user.token).to.be.a('string');",
+									"    pm.environment.set(\"token\", jsonData.user.token);",
+									"    pm.environment.set(\"g_created_user_id\", jsonData.user.id)",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"user\": {\"username\": \"{{g_tester_username}}\", \"email\": \"{{g_tester_email}}\", \"password\": \"{{g_tester_password}}\"}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Fails WIth Existing email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ad45b395-a242-4461-a512-bc7b1a189459",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"/*pm.test(\"response is reasonable fast\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});*/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"user\": {\"username\": \"{{g_tester_username}}\", \"email\": \"{{g_tester_email}}\", \"password\": \"{{g_tester_password}}\"}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ad45b395-a242-4461-a512-bc7b1a189459",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"/*pm.test(\"response is reasonable fast\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});*/",
+									"",
+									"",
+									"pm.test(\"Returns user token\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.user.token).to.be.a('string');",
+									"    pm.environment.set(\"token\", jsonData.user.token);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"user\": {\"email\": \"{{g_tester_email}}\", \"password\": \"{{g_tester_password}}\"}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ad45b395-a242-4461-a512-bc7b1a189459",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"/*pm.test(\"response is reasonable fast\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});*/",
+									"",
+									"",
+									"pm.test(\"Returns user data\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.user.username).to.be.a('string');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users/{{g_created_user_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users",
+								"{{g_created_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Fails Without Valid API Key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ad45b395-a242-4461-a512-bc7b1a189459",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"/*pm.test(\"response is reasonable fast\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});*/",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "IaminvalidAPIToken"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users/{{g_created_user_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users",
+								"{{g_created_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ad45b395-a242-4461-a512-bc7b1a189459",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"/*pm.test(\"response is reasonable fast\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});*/",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users/{{g_created_user_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users",
+								"{{g_created_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User Fails Without Valid Auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ad45b395-a242-4461-a512-bc7b1a189459",
+								"exec": [
+									"pm.test(\"response is ok\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"/*pm.test(\"response is reasonable fast\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});*/",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users/{{g_created_user_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users",
+								"{{g_created_user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

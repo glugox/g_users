@@ -1,0 +1,46 @@
+# -*- restclient -*-
+#
+# This is restclient file meant for ad hoc testing.
+
+## Users
+
+
+# Register user "tester".
+POST http://localhost:8000/api/users
+Content-Type: application/json
+
+{"user": {"username": "{{tester_username}}", "email": "{{tester_email}}", "password": "{{tester_password}}"}}
+
+
+### Register user "existing". He will write articles
+POST http://localhost:8000/api/users
+Content-Type: application/json
+
+{"user": {"username": "{{existing_username}}", "email": "{{existing_email}}", "password": "{{existing_password}}"}}
+
+
+### Login as "tester"
+POST http://localhost:8000/api/users/login
+Content-Type: application/json
+
+{"user": {"email": "{{tester_email}}", "password": "{{tester_password}}"}}
+
+> {% client.global.set("auth_token", response.body.user.token); %}
+
+
+### Get user data. Requires token, so either register or login first.
+GET http://localhost:8000/api/user
+Authorization: Token :auth_token
+
+
+
+##### Profiles
+
+### Get profile anonymously
+GET http://localhost:8000/api/profiles/{{existing_username}}
+
+### Get profile as current user
+GET http://localhost:8000/api/profiles/{{existing_username}}
+Authorization: Token :auth_token
+
+###
