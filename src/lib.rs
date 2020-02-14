@@ -10,6 +10,7 @@ extern crate diesel;
 #[macro_use]
 extern crate validator_derive;
 
+
 mod auth;
 pub mod config;
 mod db;
@@ -40,13 +41,18 @@ fn cors_fairing() -> Cors {
     Cors::from_options(&Default::default()).expect("Cors fairing cannot be created")
 }
 
-pub fn rocket(env: Option<Environment>) -> rocket::Rocket {
 
+pub fn load_env( env: Option<Environment> ){
     // Load proper .env file
     match env {
         Some(e) => dotenv::from_filename(".env.test").ok(),
         _ => dotenv::dotenv().ok()
     };
+}
+
+
+pub fn rocket() -> rocket::Rocket {
+
 
     rocket::custom(config::from_env())
         .mount(

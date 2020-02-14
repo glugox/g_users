@@ -245,6 +245,7 @@ dependencies = [
  "rocket",
  "rocket_contrib",
  "rocket_cors",
+ "run_script",
  "rust-crypto",
  "serde",
  "serde_json",
@@ -942,6 +943,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "run_script"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "80a217951e2afacc57d3129bd52aeddc550559f5a82f57529a31fc5675bd6621"
+dependencies = [
+ "rand 0.7.3",
+ "users",
+]
+
+[[package]]
 name = "rust-crypto"
 version = "0.2.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1206,6 +1217,15 @@ dependencies = [
  "idna 0.2.0",
  "matches",
  "percent-encoding 2.1.0",
+]
+
+[[package]]
+name = "users"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c72f4267aea0c3ec6d07eaabea6ead7c5ddacfafc5e22bcf8d186706851fb4cf"
+dependencies = [
+ "libc",
 ]
 
 [[package]]

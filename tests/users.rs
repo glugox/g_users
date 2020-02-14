@@ -1,6 +1,8 @@
 //! Test registration and login
 
 mod common;
+
+
 use common::*;
 use rocket::http::{ContentType, Status};
 use rocket::local::LocalResponse;
