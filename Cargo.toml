@@ -13,7 +13,7 @@ serde = { version = "1.0.103", features = ["derive"] }
 serde_json = "1.0.44"
 rust-crypto = "0.2.36"
 chrono = { version = "0.4.10", features = ["serde"] }
-diesel = { version = "1.4.3", features = ["postgres", "chrono"] }
+diesel = { version = "1.4.3", features = ["postgres", "sqlite", "chrono"] }
 validator = "0.10.0"
 validator_derive = "0.10.0"
 slug = "0.1.4"

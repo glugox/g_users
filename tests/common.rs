@@ -1,17 +1,17 @@
-#![allow(unused)]
-
 //! This file contains utility functions used by all tests.
-
-
+#![allow(unused)]
 use rocket::http::{ContentType, Header, Status};
 use rocket::local::{Client, LocalResponse};
 use serde_json::Value;
 use once_cell::sync::OnceCell;
 use g_users::config::TOKEN_PREFIX;
+use g_users::Environment;
+
 
 pub const USERNAME: &'static str = "tuser";
 pub const EMAIL: &'static str = "tuser@example.io";
 pub const PASSWORD: &'static str = "mustbe8ormore";
+
 
 /// Utility macro for turning `json!` into string.
 #[macro_export]
@@ -21,17 +21,19 @@ macro_rules! json_string {
     };
 }
 
+
 pub type Token = String;
 
 
 pub fn test_client() -> &'static Client {
     static INSTANCE: OnceCell<Client> = OnceCell::new();
     INSTANCE.get_or_init(|| {
-        let rocket = g_users::rocket();
+        let rocket = g_users::rocket(Some(Environment::Test));
         Client::new(rocket).expect("valid rocket instance")
     })
 
 }
+
 
 /// Retrieve a token registering a user if required.
 pub fn login(client: &Client) -> Token {
@@ -41,10 +43,12 @@ pub fn login(client: &Client) -> Token {
     })
 }
 
+
 /// Make an authorization header.
 pub fn token_header(token: Token) -> Header<'static> {
     Header::new("authorization", format!("{}{}", TOKEN_PREFIX, token))
 }
+
 
 /// Helper function for converting response to json value.
 pub fn response_json_value(response: &mut LocalResponse) -> Value {
@@ -52,7 +56,9 @@ pub fn response_json_value(response: &mut LocalResponse) -> Value {
     serde_json::from_reader(body.into_inner()).expect("can't parse value")
 }
 
+
 // Internal stuff
+
 
 /// Login as default user returning None if login is not found
 fn try_login(client: &Client) -> Option<Token> {
@@ -75,6 +81,7 @@ fn try_login(client: &Client) -> Option<Token> {
         .expect("Cannot extract token");
     Some(token)
 }
+
 
 /// Register user for
 pub fn register(client: &Client, username: &str, email: &str, password: &str) {

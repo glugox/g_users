@@ -10,8 +10,10 @@ pub struct Errors {
     errors: ValidationErrors,
 }
 
+
 pub type FieldName = &'static str;
 pub type FieldErrorCode = &'static str;
+
 
 impl Errors {
     pub fn new(errs: &[(FieldName, FieldErrorCode)]) -> Self {
@@ -22,6 +24,7 @@ impl Errors {
         Self { errors }
     }
 }
+
 
 impl<'r> Responder<'r> for Errors {
     fn respond_to(self, req: &Request) -> response::Result<'r> {
@@ -42,9 +45,11 @@ impl<'r> Responder<'r> for Errors {
     }
 }
 
+
 pub struct FieldValidator {
     errors: ValidationErrors,
 }
+
 
 impl Default for FieldValidator {
     fn default() -> Self {
@@ -53,6 +58,7 @@ impl Default for FieldValidator {
         }
     }
 }
+
 
 impl FieldValidator {
     pub fn validate<T: Validate>(model: &T) -> Self {

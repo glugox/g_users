@@ -6,14 +6,13 @@ use std::env;
 /// Debug only secret for JWT encoding & decoding.
 #[cfg(debug_assertions)]
 const SECRET: &'static str = "8Xui8SXmnJ+7egV/9dlfYYLGQJeEx4+DwmSQLwDVXJg=";
-
-
-
 pub const TOKEN_PREFIX: &'static str = "Bearer ";
+
 
 pub struct AppState {
     pub secret: Vec<u8>,
 }
+
 
 impl AppState {
     pub fn manage() -> AdHoc {

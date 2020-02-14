@@ -2,8 +2,10 @@ use rocket_contrib::databases::diesel;
 
 pub mod users;
 
+
 #[database("diesel_postgres_pool")]
 pub struct Conn(diesel::PgConnection);
+
 
 use diesel::prelude::*;
 use diesel::query_dsl::methods::LoadQuery;
@@ -11,9 +13,11 @@ use diesel::query_builder::*;
 use diesel::pg::Pg;
 use diesel::sql_types::BigInt;
 
+
 pub trait OffsetLimit: Sized {
     fn offset_and_limit(self, offset: i64, limit: i64) -> OffsetLimited<Self>;
 }
+
 
 impl<T> OffsetLimit for T {
     fn offset_and_limit(self, offset: i64, limit: i64) -> OffsetLimited<Self> {
@@ -25,12 +29,14 @@ impl<T> OffsetLimit for T {
     }
 }
 
+
 #[derive(Debug, Clone, Copy, QueryId)]
 pub struct OffsetLimited<T> {
     query: T,
     offset: i64,
     limit: i64,
 }
+
 
 impl<T> OffsetLimited<T> {
 
@@ -45,11 +51,14 @@ impl<T> OffsetLimited<T> {
     }
 }
 
+
 impl<T: Query> Query for OffsetLimited<T> {
     type SqlType = (T::SqlType, BigInt);
 }
 
+
 impl<T> RunQueryDsl<PgConnection> for OffsetLimited<T> {}
+
 
 impl<T> QueryFragment<Pg> for OffsetLimited<T>
     where

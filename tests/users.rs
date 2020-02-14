@@ -1,10 +1,10 @@
 //! Test registration and login
 
 mod common;
-
 use common::*;
 use rocket::http::{ContentType, Status};
 use rocket::local::LocalResponse;
+
 
 #[test]
 /// Register new user, handling repeated registration as well.
@@ -27,6 +27,7 @@ fn test_register() {
         _ => panic!("Got status: {}", status),
     }
 }
+
 
 #[test]
 /// Registration with the same email must fail
@@ -58,6 +59,7 @@ fn test_register_with_duplicated_email() {
     assert_eq!(error, Some("has already been taken"))
 }
 
+
 #[test]
 /// Login with wrong password must fail.
 fn test_incorrect_login() {
@@ -83,6 +85,7 @@ fn test_incorrect_login() {
     assert_eq!(login_error, Some("is invalid"));
 }
 
+
 #[test]
 /// Try logging checking that access Token is present.
 fn test_login() {
@@ -103,6 +106,7 @@ fn test_login() {
         .expect("token must be a string");
 }
 
+
 #[test]
 /// Check that `/me` endpoint returns expected data.
 fn test_get_user() {
@@ -115,6 +119,7 @@ fn test_get_user() {
 
     check_user_response(response);
 }
+
 
 #[test]
 /// Test user updating.
@@ -131,7 +136,9 @@ fn test_put_user() {
     check_user_response(response);
 }
 
+
 // Utility functions
+
 
 /// Assert that body contains "user" response with expected fields.
 fn check_user_response(response: &mut LocalResponse) {
@@ -144,6 +151,7 @@ fn check_user_response(response: &mut LocalResponse) {
     assert!(user.get("image").is_some());
     assert!(user.get("token").is_some());
 }
+
 
 fn check_user_validation_errors(response: &mut LocalResponse) {
     let value = response_json_value(response);
