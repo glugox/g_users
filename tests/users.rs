@@ -2,11 +2,9 @@
 
 mod common;
 
-
 use common::*;
 use rocket::http::{ContentType, Status};
 use rocket::local::LocalResponse;
-
 
 #[test]
 /// Register new user, handling repeated registration as well.
@@ -30,12 +28,12 @@ fn test_register() {
     }
 }
 
-
 #[test]
 /// Registration with the same email must fail
 fn test_register_with_duplicated_email() {
     let client = test_client();
-    register(client, "clone", "clone@glugate.com", PASSWORD);
+    let email = "clone@glugate.com";
+    register(client, "clone", &email, PASSWORD);
 
     let response = &mut client
         .post("/api/users")
@@ -43,7 +41,7 @@ fn test_register_with_duplicated_email() {
         .body(json_string!({
             "user": {
                 "username": "clone_1",
-                "email": "clone@glugate.com",
+                "email": &email,
                 "password": PASSWORD,
             },
         }))
@@ -60,7 +58,6 @@ fn test_register_with_duplicated_email() {
 
     assert_eq!(error, Some("has already been taken"))
 }
-
 
 #[test]
 /// Login with wrong password must fail.
@@ -87,11 +84,12 @@ fn test_incorrect_login() {
     assert_eq!(login_error, Some("is invalid"));
 }
 
-
 #[test]
 /// Try logging checking that access Token is present.
 fn test_login() {
     let client = test_client();
+    register(client, USERNAME, EMAIL, PASSWORD);
+
     let response = &mut client
         .post("/api/users/login")
         .header(ContentType::JSON)
@@ -108,20 +106,15 @@ fn test_login() {
         .expect("token must be a string");
 }
 
-
 #[test]
 /// Check that `/me` endpoint returns expected data.
 fn test_get_user() {
     let client = test_client();
     let token = login(&client);
-    let response = &mut client
-        .get("/api/me")
-        .header(token_header(token))
-        .dispatch();
+    let response = &mut client.get("/api/me").header(token_header(token)).dispatch();
 
     check_user_response(response);
 }
-
 
 #[test]
 /// Test user updating.
@@ -138,9 +131,7 @@ fn test_put_user() {
     check_user_response(response);
 }
 
-
 // Utility functions
-
 
 /// Assert that body contains "user" response with expected fields.
 fn check_user_response(response: &mut LocalResponse) {
@@ -153,7 +144,6 @@ fn check_user_response(response: &mut LocalResponse) {
     assert!(user.get("image").is_some());
     assert!(user.get("token").is_some());
 }
-
 
 fn check_user_validation_errors(response: &mut LocalResponse) {
     let value = response_json_value(response);

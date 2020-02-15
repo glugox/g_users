@@ -12,7 +12,7 @@ Content-Type: application/json
 {"user": {"username": "{{tester_username}}", "email": "{{tester_email}}", "password": "{{tester_password}}"}}
 
 
-### Register user "existing". He will write articles
+### Register user "existing".
 POST http://localhost:8000/api/users
 Content-Type: application/json
 
@@ -29,7 +29,7 @@ Content-Type: application/json
 
 
 ### Get user data. Requires token, so either register or login first.
-GET http://localhost:8000/api/user
+GET http://localhost:8000/api/me
 Authorization: Token :auth_token
 
 
@@ -38,9 +38,5 @@ Authorization: Token :auth_token
 
 ### Get profile anonymously
 GET http://localhost:8000/api/profiles/{{existing_username}}
-
-### Get profile as current user
-GET http://localhost:8000/api/profiles/{{existing_username}}
-Authorization: Token :auth_token
 
 ###

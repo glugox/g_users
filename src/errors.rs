@@ -10,10 +10,8 @@ pub struct Errors {
     errors: ValidationErrors,
 }
 
-
 pub type FieldName = &'static str;
 pub type FieldErrorCode = &'static str;
-
 
 impl Errors {
     pub fn new(errs: &[(FieldName, FieldErrorCode)]) -> Self {
@@ -25,7 +23,6 @@ impl Errors {
     }
 }
 
-
 impl<'r> Responder<'r> for Errors {
     fn respond_to(self, req: &Request) -> response::Result<'r> {
         use validator::ValidationErrorsKind::Field;
@@ -33,7 +30,10 @@ impl<'r> Responder<'r> for Errors {
         let mut errors = json!({});
         for (field, field_errors) in self.errors.into_errors() {
             if let Field(field_errors) = field_errors {
-                errors[field] = field_errors.into_iter().map(|field_error| field_error.code).collect();
+                errors[field] = field_errors
+                    .into_iter()
+                    .map(|field_error| field_error.code)
+                    .collect();
             }
         }
 
@@ -45,11 +45,9 @@ impl<'r> Responder<'r> for Errors {
     }
 }
 
-
 pub struct FieldValidator {
     errors: ValidationErrors,
 }
-
 
 impl Default for FieldValidator {
     fn default() -> Self {
@@ -58,7 +56,6 @@ impl Default for FieldValidator {
         }
     }
 }
-
 
 impl FieldValidator {
     pub fn validate<T: Validate>(model: &T) -> Self {

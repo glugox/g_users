@@ -10,7 +10,6 @@ extern crate diesel;
 #[macro_use]
 extern crate validator_derive;
 
-
 mod auth;
 pub mod config;
 mod db;
@@ -19,9 +18,9 @@ mod models;
 mod routes;
 mod schema;
 
+use dotenv;
 use rocket_contrib::json::JsonValue;
 use rocket_cors::Cors;
-use dotenv;
 
 #[catch(404)]
 fn not_found() -> JsonValue {
@@ -31,29 +30,25 @@ fn not_found() -> JsonValue {
     })
 }
 
-pub enum Environment{
+pub enum Environment {
     Dev,
     Test,
-    Production
+    Production,
 }
 
 fn cors_fairing() -> Cors {
     Cors::from_options(&Default::default()).expect("Cors fairing cannot be created")
 }
 
-
-pub fn load_env( env: Option<Environment> ){
+pub fn load_env(env: Option<Environment>) {
     // Load proper .env file
     match env {
-        Some(e) => dotenv::from_filename(".env.test").ok(),
-        _ => dotenv::dotenv().ok()
+        Some(_) => dotenv::from_filename(".env.test").ok(),
+        _ => dotenv::dotenv().ok(),
     };
 }
 
-
 pub fn rocket() -> rocket::Rocket {
-
-
     rocket::custom(config::from_env())
         .mount(
             "/api",

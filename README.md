@@ -19,7 +19,8 @@ Dependencies:
 * `chrono` Dat and time library
 * `dotenv` Loading from local .env file
 * `jsonwebtoken` Authentication
-* `assert_cli` integration testing
+* `assert_cli` Integration testing
+* `run_script` Used only in tests for generating test database to distinguish the main database when running tests
 
 
 ### Getting started
@@ -32,9 +33,8 @@ curl https://sh.rustup.rs -sSf | sh
 rustup install nightly
 
 # start postgresql and seed the database
-psql -f init.sql
 cargo install diesel_cli --no-default-features --features "postgres"
-diesel migration run
+diesel setup
 
 cargo run
 ```
@@ -44,18 +44,18 @@ Simply run:
 ```sh
 cargo test
 ```
-You can also check postman/newman. See `/tests` directory.
+This will try to create *_test database and run all migrations, so make sure you have correct postgress access in `./env.test` file. 
+For development, you probably want to set the username to `postgres` and password to corresponding (main) postgres password.
+
+You can also check Postman testing. See `/tests/Glugate.postman_collection.json` flie which can be imported into Postman.
+Note that Postman test are running against the main database ( not the *_test one as integrations test do ), 
+but on successful tests, all the test data should be cleaned up as we call DELETE method at the end.
+
+To run restclient file tests you can run ad hoc testing. See `/tests/dev.http`
+
+Note that in order to run the Postman and http tests, you need to run the application first.
 
 ### How it works
 `diesel` cli uses `.env` file.
 Rocket sets database configuration from `.env` file.
 Checkout Rocket's amazing [guide](https://rocket.rs/guide/)
-
-### Features
-By default random suffixes feature is enabled, so one could easily
-create multiple articles with the same title. To disable it:
-
-```sh
-cargo run --no-default-features
-
-```

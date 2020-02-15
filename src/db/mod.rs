@@ -2,22 +2,18 @@ use rocket_contrib::databases::diesel;
 
 pub mod users;
 
-
 #[database("diesel_postgres_pool")]
 pub struct Conn(diesel::PgConnection);
 
-
-use diesel::prelude::*;
-use diesel::query_dsl::methods::LoadQuery;
-use diesel::query_builder::*;
 use diesel::pg::Pg;
+use diesel::prelude::*;
+use diesel::query_builder::*;
+use diesel::query_dsl::methods::LoadQuery;
 use diesel::sql_types::BigInt;
-
 
 pub trait OffsetLimit: Sized {
     fn offset_and_limit(self, offset: i64, limit: i64) -> OffsetLimited<Self>;
 }
-
 
 impl<T> OffsetLimit for T {
     fn offset_and_limit(self, offset: i64, limit: i64) -> OffsetLimited<Self> {
@@ -29,7 +25,6 @@ impl<T> OffsetLimit for T {
     }
 }
 
-
 #[derive(Debug, Clone, Copy, QueryId)]
 pub struct OffsetLimited<T> {
     query: T,
@@ -37,12 +32,11 @@ pub struct OffsetLimited<T> {
     limit: i64,
 }
 
-
 impl<T> OffsetLimited<T> {
-
+    #[allow(dead_code)]
     pub fn load_and_count<U>(self, conn: &PgConnection) -> QueryResult<(Vec<U>, i64)>
-        where
-            Self: LoadQuery<PgConnection, (U, i64)>,
+    where
+        Self: LoadQuery<PgConnection, (U, i64)>,
     {
         let results = self.load::<(U, i64)>(conn)?;
         let total = results.get(0).map(|x| x.1).unwrap_or(0);
@@ -51,18 +45,15 @@ impl<T> OffsetLimited<T> {
     }
 }
 
-
 impl<T: Query> Query for OffsetLimited<T> {
     type SqlType = (T::SqlType, BigInt);
 }
 
-
 impl<T> RunQueryDsl<PgConnection> for OffsetLimited<T> {}
 
-
 impl<T> QueryFragment<Pg> for OffsetLimited<T>
-    where
-        T: QueryFragment<Pg>,
+where
+    T: QueryFragment<Pg>,
 {
     fn walk_ast(&self, mut out: AstPass<Pg>) -> QueryResult<()> {
         out.push_sql("SELECT *, COUNT(*) OVER () FROM (");

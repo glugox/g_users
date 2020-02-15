@@ -2,9 +2,7 @@ use crate::auth::Auth;
 use chrono::{Duration, Utc};
 use serde::Serialize;
 
-
 type Url = String;
-
 
 #[derive(Queryable, Serialize)]
 pub struct User {
@@ -17,7 +15,6 @@ pub struct User {
     pub hash: String,
 }
 
-
 #[derive(Serialize)]
 pub struct UserAuth<'a> {
     id: i32,
@@ -28,7 +25,6 @@ pub struct UserAuth<'a> {
     token: String,
 }
 
-
 #[derive(Serialize)]
 pub struct Profile {
     id: i32,
@@ -37,7 +33,6 @@ pub struct Profile {
     image: Option<String>,
     following: bool,
 }
-
 
 impl User {
     pub fn to_user_auth(&self, secret: &[u8]) -> UserAuth {
@@ -56,16 +51,6 @@ impl User {
             bio: self.bio.as_ref().map(String::as_str),
             image: self.image.as_ref().map(String::as_str),
             token,
-        }
-    }
-
-    pub fn to_profile(self, following: bool) -> Profile {
-        Profile {
-            id: self.id,
-            username: self.username,
-            bio: self.bio,
-            image: self.image,
-            following,
         }
     }
 }

@@ -1,29 +1,24 @@
 //! This file contains utility functions used by all tests.
 #![allow(unused)]
+use g_users::config::TOKEN_PREFIX;
+use g_users::{load_env, Environment};
+use once_cell::sync::OnceCell;
 use rocket::http::{ContentType, Header, Status};
 use rocket::local::{Client, LocalResponse};
+use run_script::ScriptOptions;
 use serde_json::Value;
-use once_cell::sync::OnceCell;
-use g_users::config::TOKEN_PREFIX;
-use g_users::{Environment, load_env};
-use std::process::{Command, Stdio};
-use std::ops::Deref;
 use std::env;
 use std::fs::File;
-use run_script::ScriptOptions;
+use std::ops::Deref;
+use std::process::{Command, Stdio};
 
 extern crate run_script;
 
 use run_script::run_or_exit;
 
-
 pub const USERNAME: &'static str = "tuser";
 pub const EMAIL: &'static str = "tuser@example.io";
 pub const PASSWORD: &'static str = "mustbe8ormore";
-
-
-
-
 
 /// Utility macro for turning `json!` into string.
 #[macro_export]
@@ -33,12 +28,9 @@ macro_rules! json_string {
     };
 }
 
-
 pub type Token = String;
 
-
-pub fn setup_db(){
-
+pub fn setup_db() {
     load_env(Some(Environment::Test));
     let database_url =
         env::var("DATABASE_URL").expect("No DATABASE_URL environment variable found");
@@ -54,14 +46,12 @@ pub fn setup_db(){
         diesel database reset
         "#,
         &args,
-        &options
+        &options,
     );
 
     println!("Output: {}", output);
     println!("Error: {}", error);
 }
-
-
 
 pub fn test_client() -> &'static Client {
     static INSTANCE: OnceCell<Client> = OnceCell::new();
@@ -70,9 +60,7 @@ pub fn test_client() -> &'static Client {
         let rocket = g_users::rocket();
         Client::new(rocket).expect("valid rocket instance")
     })
-
 }
-
 
 /// Retrieve a token registering a user if required.
 pub fn login(client: &Client) -> Token {
@@ -82,12 +70,10 @@ pub fn login(client: &Client) -> Token {
     })
 }
 
-
 /// Make an authorization header.
 pub fn token_header(token: Token) -> Header<'static> {
     Header::new("authorization", format!("{}{}", TOKEN_PREFIX, token))
 }
-
 
 /// Helper function for converting response to json value.
 pub fn response_json_value(response: &mut LocalResponse) -> Value {
@@ -95,9 +81,7 @@ pub fn response_json_value(response: &mut LocalResponse) -> Value {
     serde_json::from_reader(body.into_inner()).expect("can't parse value")
 }
 
-
 // Internal stuff
-
 
 /// Login as default user returning None if login is not found
 fn try_login(client: &Client) -> Option<Token> {
@@ -121,7 +105,6 @@ fn try_login(client: &Client) -> Option<Token> {
     Some(token)
 }
 
-
 /// Register user for
 pub fn register(client: &Client, username: &str, email: &str, password: &str) {
     let response = client
@@ -132,6 +115,6 @@ pub fn register(client: &Client, username: &str, email: &str, password: &str) {
 
     match response.status() {
         Status::Ok | Status::UnprocessableEntity => {} // ok,
-        status => panic!("Registration failed: {}", status)
+        status => panic!("Registration failed: {}", status),
     }
 }

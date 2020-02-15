@@ -1,20 +1,18 @@
+use jsonwebtoken as jwt;
+use rocket::http::Status;
 use rocket::request::{self, FromRequest, Request};
 use rocket::{Outcome, State};
 use serde::{Deserialize, Serialize};
-use rocket::http::Status;
-use jsonwebtoken as jwt;
 
 use crate::config;
 use crate::config::AppState;
 
 pub struct ApiKey(String);
 
-
 /// Returns true if `key` is a valid API key string.
 fn is_valid(key: &str, secret: &[u8]) -> bool {
     decode_token(key, secret).is_some()
 }
-
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Auth {
@@ -25,13 +23,11 @@ pub struct Auth {
     pub username: String,
 }
 
-
 impl Auth {
     pub fn token(&self, secret: &[u8]) -> String {
         jwt::encode(&jwt::Header::default(), self, secret).expect("jwt")
     }
 }
-
 
 impl<'a, 'r> FromRequest<'a, 'r> for Auth {
     type Error = ();
@@ -50,7 +46,6 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
     }
 }
 
-
 impl<'a, 'r> FromRequest<'a, 'r> for ApiKey {
     type Error = ();
 
@@ -66,7 +61,6 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApiKey {
     }
 }
 
-
 fn extract_auth_from_request(request: &Request, secret: &[u8]) -> Option<Auth> {
     request
         .headers()
@@ -75,7 +69,6 @@ fn extract_auth_from_request(request: &Request, secret: &[u8]) -> Option<Auth> {
         .and_then(|token| decode_token(token, secret))
 }
 
-
 fn extract_token_from_header(header: &str) -> Option<&str> {
     if header.starts_with(config::TOKEN_PREFIX) {
         Some(&header[config::TOKEN_PREFIX.len()..])
@@ -83,7 +76,6 @@ fn extract_token_from_header(header: &str) -> Option<&str> {
         None
     }
 }
-
 
 /// Decode token into `Auth` struct. If any error is encountered, log it
 /// an return None.

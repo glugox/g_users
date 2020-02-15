@@ -1,6 +1,6 @@
+use crate::db::Conn;
 use crate::models::user::User;
 use crate::schema::users;
-use crate::db::Conn;
 use std::ops::Deref;
 
 use crypto::scrypt::{scrypt_check, scrypt_simple, ScryptParams};
@@ -8,7 +8,6 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use diesel::result::{DatabaseErrorKind, Error};
 use serde::Deserialize;
-
 
 #[derive(Insertable)]
 #[table_name = "users"]
@@ -18,17 +17,10 @@ pub struct NewUser<'a> {
     pub hash: &'a str,
 }
 
-
 pub enum UserCreationError {
     DuplicatedEmail,
     DuplicatedUsername,
 }
-
-
-pub enum UserDeletionError {
-    DeletingSelf,
-}
-
 
 impl From<Error> for UserCreationError {
     fn from(err: Error) -> UserCreationError {
@@ -42,7 +34,6 @@ impl From<Error> for UserCreationError {
         panic!("Error creating user: {:?}", err)
     }
 }
-
 
 pub fn create(
     conn: &Conn,
@@ -64,7 +55,6 @@ pub fn create(
         .get_result::<User>(conn.deref())
         .map_err(Into::into)
 }
-
 
 pub fn login(conn: &Conn, email: &str, password: &str) -> Option<User> {
     let user = users::table
@@ -88,7 +78,6 @@ pub fn login(conn: &Conn, email: &str, password: &str) -> Option<User> {
     }
 }
 
-
 pub fn find(conn: &Conn, id: i32) -> Option<User> {
     users::table
         .find(id)
@@ -97,17 +86,12 @@ pub fn find(conn: &Conn, id: i32) -> Option<User> {
         .ok()
 }
 
-
 pub fn delete(conn: &Conn, id: i32) {
-    let result = diesel::delete(
-        users::table.filter(users::id.eq(id)),
-    )
-        .execute(conn.deref());
+    let result = diesel::delete(users::table.filter(users::id.eq(id))).execute(conn.deref());
     if let Err(err) = result {
         eprintln!("users::delete: {}", err);
     }
 }
-
 
 // TODO: remove clone when diesel will allow skipping fields
 #[derive(Deserialize, AsChangeset, Default, Clone)]
@@ -122,7 +106,6 @@ pub struct UpdateUserData {
     #[column_name = "hash"]
     password: Option<String>,
 }
-
 
 pub fn update(conn: &PgConnection, id: i32, data: &UpdateUserData) -> Option<User> {
     let data = &UpdateUserData {

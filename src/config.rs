@@ -1,5 +1,5 @@
-use rocket::fairing::AdHoc;
 use rocket::config::{Config, Environment, Value};
+use rocket::fairing::AdHoc;
 use std::collections::HashMap;
 use std::env;
 
@@ -8,11 +8,9 @@ use std::env;
 const SECRET: &'static str = "8Xui8SXmnJ+7egV/9dlfYYLGQJeEx4+DwmSQLwDVXJg=";
 pub const TOKEN_PREFIX: &'static str = "Bearer ";
 
-
 pub struct AppState {
     pub secret: Vec<u8>,
 }
-
 
 impl AppState {
     pub fn manage() -> AdHoc {
@@ -26,11 +24,12 @@ impl AppState {
                 }
             });
 
-            Ok(rocket.manage(AppState{secret: secret.into_bytes()}))
+            Ok(rocket.manage(AppState {
+                secret: secret.into_bytes(),
+            }))
         })
     }
 }
-
 
 /// Create rocket config from environment variables
 pub fn from_env() -> Config {
@@ -41,10 +40,8 @@ pub fn from_env() -> Config {
         .parse::<u16>()
         .expect("PORT environment variable should parse to an integer");
 
-
     let mut database_config = HashMap::new();
     let mut databases = HashMap::new();
-
 
     let database_url =
         env::var("DATABASE_URL").expect("No DATABASE_URL environment variable found");

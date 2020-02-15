@@ -3,17 +3,15 @@ use rocket_contrib::json::{Json, JsonValue};
 use serde::Deserialize;
 use validator::Validate;
 
-use crate::auth::{Auth, ApiKey};
+use crate::auth::{ApiKey, Auth};
 use crate::config::AppState;
 use crate::db::{self, users::UserCreationError};
 use crate::errors::{Errors, FieldValidator};
-
 
 #[derive(Deserialize)]
 pub struct NewUser {
     user: NewUserData,
 }
-
 
 #[derive(Deserialize, Validate)]
 struct NewUserData {
@@ -24,7 +22,6 @@ struct NewUserData {
     #[validate(length(min = 8))]
     password: Option<String>,
 }
-
 
 #[post("/users", format = "json", data = "<new_user>")]
 pub fn post_users(
@@ -52,19 +49,16 @@ pub fn post_users(
         })
 }
 
-
 #[derive(Deserialize)]
 pub struct LoginUser {
     user: LoginUserData,
 }
-
 
 #[derive(Deserialize)]
 struct LoginUserData {
     email: Option<String>,
     password: Option<String>,
 }
-
 
 #[post("/users/login", format = "json", data = "<user>")]
 pub fn post_users_login(
@@ -84,24 +78,20 @@ pub fn post_users_login(
         .ok_or_else(|| Errors::new(&[("email or password", "is invalid")]))
 }
 
-
 #[get("/users/<id>")]
 pub fn get_user(_key: ApiKey, id: i32, conn: db::Conn) -> Option<JsonValue> {
     db::users::find(&conn, id).map(|user| json!({ "user": user }))
 }
-
 
 #[get("/me")]
 pub fn get_me(auth: Auth, conn: db::Conn, state: State<AppState>) -> Option<JsonValue> {
     db::users::find(&conn, auth.id).map(|user| json!({ "user": user.to_user_auth(&state.secret) }))
 }
 
-
 #[derive(Deserialize)]
 pub struct UpdateUser {
     user: db::users::UpdateUserData,
 }
-
 
 #[put("/users", format = "json", data = "<user>")]
 pub fn put_user(
@@ -114,8 +104,7 @@ pub fn put_user(
         .map(|user| json!({ "user": user.to_user_auth(&state.secret) }))
 }
 
-
 #[delete("/users/<id>")]
-pub fn delete_user(id: i32, auth: Auth, conn: db::Conn)  {
+pub fn delete_user(id: i32, _auth: Auth, conn: db::Conn) {
     db::users::delete(&conn, id);
 }
