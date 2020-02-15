@@ -1,5 +1,13 @@
 language: rust
+cache: cargo
 rust:
   - nightly
 script:
-  - cargo test
+  - cargo test --verbose --all
+services:
+  - postgres
+before_script:
+  - pip install 'travis-cargo<0.2' --user
+  - export PATH=$HOME/.local/bin:$PATH
+  - mysql -e "create database diesel_test; create database diesel_unit_test; grant all on \`diesel_%\`.* to 'travis'@'%';" -uroot
+  - rm rust-toolchain
