@@ -3,6 +3,8 @@ cache: cargo
 rust:
   - nightly
 script:
-  - cargo test --verbose --all
+  - cargo test
 services:
   - postgres
+before_script:
+  - cargo install diesel_cli --no-default-features --features=postgres
