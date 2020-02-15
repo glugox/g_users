@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal">
-    <data-source name="postgres@localhost" uuid="510a1b22-e681-4458-ae0c-c78836e99462">
+    <data-source name="postgres@localhost" uuid="696760d4-afb7-4189-b061-b4ccaf8ca48a">
       <database-info product="PostgreSQL" version="10.10 (Ubuntu 10.10-0ubuntu0.18.04.1)" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.2.5" dbms="POSTGRES" exact-version="10.10" exact-driver-version="42.2">
         <identifier-quote-string>&quot;</identifier-quote-string>
       </database-info>
@@ -10,7 +10,7 @@
       <user-name>ervin</user-name>
       <schema-mapping>
         <introspection-scope>
-          <node kind="database" qname="g_users" />
+          <node kind="database" qname="g_users_test" />
         </introspection-scope>
       </schema-mapping>
     </data-source>
