@@ -1,6 +1,7 @@
 users
 ==================
 
+[![Build Status](https://travis-ci.com/glugox/g_users.svg?branch=master)](https://travis-ci.com/glugox/g_users)
 
 Users service for Glugate as part of microservice architecture.
 
