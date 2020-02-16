@@ -41,13 +41,13 @@ pub fn setup_db() {
     // old database and than sets up the new one again.
     let options = ScriptOptions::new();
     let args = vec!["--database-url".to_string(), database_url];
-    let (output, error) = run_script::run_or_exit(
+    let (code, output, error) = run_script::run(
         r#"
         diesel database reset
         "#,
         &args,
         &options,
-    );
+    ).unwrap();;
 
     println!("Output: {}", output);
     println!("Error: {}", error);
