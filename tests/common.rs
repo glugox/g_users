@@ -47,7 +47,7 @@ pub fn setup_db() {
         "#,
         &args,
         &options,
-    ).unwrap();;
+    ).unwrap();
 
     println!("Output: {}", output);
     println!("Error: {}", error);

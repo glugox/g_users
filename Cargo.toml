@@ -21,6 +21,8 @@ rand = "0.7.2"
 dotenv = "0.15.0"
 jsonwebtoken = "6.0.1"
 run_script = "*"
+log = "0.4"
+stderrlog = "*"
 
 [dependencies.rocket_contrib]
 version = "0.4.2"
