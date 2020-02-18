@@ -108,10 +108,23 @@ fn test_login() {
 
 #[test]
 /// Check that `/me` endpoint returns expected data.
-fn test_get_user() {
+fn test_get_me() {
     let client = test_client();
     let token = login(&client);
     let response = &mut client.get("/api/me").header(token_header(token)).dispatch();
+
+    check_user_response(response);
+}
+
+#[test]
+/// Check that `/users/<id>` endpoint returns expected data.
+fn test_get_user() {
+    let client = test_client();
+    let token = login(&client);
+    let dummy_user = create_dummy_user();
+
+    let path = "/api/users/".to_string() + user_id.to_string().as_ref();
+    let response = &mut client.get(path).header(api_header(token)).dispatch();
 
     check_user_response(response);
 }

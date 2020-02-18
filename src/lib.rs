@@ -11,12 +11,13 @@ extern crate diesel;
 extern crate validator_derive;
 
 mod auth;
-pub mod config;
 mod db;
 mod errors;
-mod models;
 mod routes;
 mod schema;
+pub mod config;
+pub mod models;
+
 
 use dotenv;
 use rocket_contrib::json::JsonValue;

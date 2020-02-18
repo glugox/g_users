@@ -14,6 +14,7 @@ fn is_valid(key: &str, secret: &[u8]) -> bool {
     decode_token(key, secret).is_some()
 }
 
+#[cfg_attr(tarpaulin, skip)]
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Auth {
     /// timestamp
