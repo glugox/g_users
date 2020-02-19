@@ -89,12 +89,14 @@ fn test_incorrect_login() {
 /// Try logging checking that access Token is present.
 fn test_login() {
     let client = test_client();
-    register(client, USERNAME, EMAIL, PASSWORD);
+
+    let dummy_user = generate_random_user_data();
+    register(client, dummy_user.username.as_ref(), dummy_user.email.as_ref(), dummy_user.password.as_ref());
 
     let response = &mut client
         .post("/api/users/login")
         .header(ContentType::JSON)
-        .body(json_string!({"user": {"email": EMAIL, "password": PASSWORD}}))
+        .body(json_string!({"user": {"email": &dummy_user.email, "password": &dummy_user.password}}))
         .dispatch();
 
     let value = response_json_value(response);
@@ -129,7 +131,7 @@ fn test_get_user() {
     let response = &mut client.get(path).header(api_header(token)).dispatch();
 
 
-    check_user_response(response, UserData::default());
+    check_user_response(response, dummy_user);
 }
 
 #[test]
@@ -161,7 +163,11 @@ fn check_user_response(response: &mut LocalResponse, expectations: UserData) {
     assert_eq!(user.get("username").expect("user has username"), &json!(expected_username));
     assert!(user.get("bio").is_some());
     assert!(user.get("image").is_some());
-    assert!(user.get("token").is_some());
+
+    // This can be tested only for /me , if we are getting
+    // data of another user, there is no need for token in that response.
+    // TODO
+    //assert!(user.get("token").is_some());
 }
 
 fn check_user_validation_errors(response: &mut LocalResponse) {
