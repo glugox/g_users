@@ -3,7 +3,6 @@
 use g_users::config::TOKEN_PREFIX;
 use g_users::{load_env, Environment};
 use g_users::models::user::User;
-
 use once_cell::sync::OnceCell;
 use rocket::http::{ContentType, Header, Status};
 use rocket::local::{Client, LocalResponse};
@@ -14,6 +13,8 @@ use std::env;
 use std::fs::File;
 use std::ops::Deref;
 use std::process::{Command, Stdio};
+use rand::{thread_rng, Rng};
+use rand::distributions::{Alphanumeric};
 
 
 extern crate run_script;
@@ -36,10 +37,20 @@ pub type Token = String;
 
 
 #[derive(Debug, Dummy)]
-pub struct RandomUserData {
-    username: String,
-    email: String,
-    password: String
+pub struct UserData {
+    pub username: String,
+    pub email: String,
+    pub password: String
+}
+
+impl Default for UserData {
+    fn default() -> UserData{
+        UserData{
+            username: USERNAME.parse().unwrap(),
+            password: PASSWORD.parse().unwrap(),
+            email: EMAIL.parse().unwrap()
+        }
+    }
 }
 
 pub fn setup_db() {
@@ -147,27 +158,13 @@ pub fn register(client: &Client, username: &str, email: &str, password: &str) ->
 }
 
 
-pub fn generateRandomUserData() -> RandomUserData{
-    let user : RandomUserData = Faker.fake();
-    return user;
-}
-
-
-pub fn create_dummy_user() -> User{
-    let client = test_client();
-    let user_data = generateRandomUserData();
-
-    let response = &mut client
-        .post("/api/users")
-        .header(ContentType::JSON)
-        .body(json_string!({"user": {"username": user_data.username, "email": user_data.email, "password": user_data.password}}))
-        .dispatch();
-
-    let value = response_json_value(response);
-    let id = value
-        .get("user")
-        .and_then(|user| user.get("id"));
-    let id_val = id.expect("Can't extract ID");
-    let id_str = id_val.as_u64();
-
+pub fn generate_random_user_data() -> UserData {
+    let mut rand: String = thread_rng().sample_iter(&Alphanumeric).take(9).collect();
+    // Avoid starting it with number
+    rand = String::from("a") + &rand;
+    UserData {
+        username: rand.to_owned(),
+        email: rand.to_owned() + "@example.com",
+        password: rand.to_owned()
+    }
 }

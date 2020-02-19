@@ -5,6 +5,7 @@ mod common;
 use common::*;
 use rocket::http::{ContentType, Status};
 use rocket::local::LocalResponse;
+use serde_json::json;
 
 #[test]
 /// Register new user, handling repeated registration as well.
@@ -22,7 +23,7 @@ fn test_register() {
     // As tests are ran in an indepent order `login()` probably has already created smoketest user.
     // And so we gracefully handle "user already exists" error here.
     match status {
-        Status::Ok => check_user_response(response),
+        Status::Ok => check_user_response(response, UserData::default()),
         Status::UnprocessableEntity => check_user_validation_errors(response),
         _ => panic!("Got status: {}", status),
     }
@@ -113,7 +114,8 @@ fn test_get_me() {
     let token = login(&client);
     let response = &mut client.get("/api/me").header(token_header(token)).dispatch();
 
-    check_user_response(response);
+
+    check_user_response(response, UserData::default());
 }
 
 #[test]
@@ -121,12 +123,13 @@ fn test_get_me() {
 fn test_get_user() {
     let client = test_client();
     let token = login(&client);
-    let dummy_user = create_dummy_user();
-
-    let path = "/api/users/".to_string() + user_id.to_string().as_ref();
+    let dummy_user = generate_random_user_data();
+    let user_id = register(client, dummy_user.username.as_ref(), dummy_user.email.as_ref(), dummy_user.password.as_ref());
+    let path = format!("{}{}", "/api/users/", user_id.unwrap());
     let response = &mut client.get(path).header(api_header(token)).dispatch();
 
-    check_user_response(response);
+
+    check_user_response(response, UserData::default());
 }
 
 #[test]
@@ -141,18 +144,21 @@ fn test_put_user() {
         .body(json_string!({"user": {"bio": "I'm doing Rust!"}}))
         .dispatch();
 
-    check_user_response(response);
+    check_user_response(response, UserData::default());
 }
 
 // Utility functions
 
 /// Assert that body contains "user" response with expected fields.
-fn check_user_response(response: &mut LocalResponse) {
+fn check_user_response(response: &mut LocalResponse, expectations: UserData) {
     let value = response_json_value(response);
     let user = value.get("user").expect("must have a 'user' field");
 
-    assert_eq!(user.get("email").expect("user has email"), EMAIL);
-    assert_eq!(user.get("username").expect("user has username"), USERNAME);
+    let expected_email = expectations.email;
+    let expected_username = expectations.username;
+
+    assert_eq!(user.get("email").expect("user has email"), &json!(expected_email));
+    assert_eq!(user.get("username").expect("user has username"), &json!(expected_username));
     assert!(user.get("bio").is_some());
     assert!(user.get("image").is_some());
     assert!(user.get("token").is_some());
