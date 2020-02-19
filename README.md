@@ -13,12 +13,12 @@ Prerequirements:
 
 Dependencies:
 -------------
-* `rocket` web framework
+* `rocket` Web framework
 * `diesel` ORM and Query Builder
 * `serde` Serialization framework
-* `validator` validation library
-* `log` and `stderrlog` logging facade
-* `clap` library for parsing command line arguments and subcommands
+* `validator` Validation library
+* `log` and `stderrlog` Logging facade
+* `clap` Library for parsing command line arguments and subcommands
 * `slug` Generating slugs from unicode strings
 * `rust-crypto` Cryptographic algorithms used for user password management
 * `rand` Random number generation
@@ -48,7 +48,7 @@ cargo run
 ### Testing
 Simply run:
 ```sh
-cargo test
+cargo test -- --test-threads 1
 ```
 This will try to create *_test database and run all migrations, so make sure you have correct postgress access in `./env.test` file. 
 For development, you probably want to set the username to `postgres` and password to corresponding (main) postgres password.
@@ -56,6 +56,7 @@ For development, you probably want to set the username to `postgres` and passwor
 You can also check Postman testing. See `/tests/Glugate.postman_collection.json` flie which can be imported into Postman.
 Note that Postman test are running against the main database ( not the *_test one as integrations test do ), 
 but on successful tests, all the test data should be cleaned up as we call DELETE method at the end.
+TODO: Looks like the main database must be clear from test users. So currently , in order to pass all tests, it is best to run them against empty database.
 
 To run restclient file tests you can run ad hoc testing. See `/tests/dev.http`
 

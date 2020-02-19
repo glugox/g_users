@@ -4,7 +4,6 @@ use crate::schema::users;
 use std::ops::Deref;
 
 use crypto::scrypt::{scrypt_check, scrypt_simple, ScryptParams};
-use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use diesel::result::{DatabaseErrorKind, Error};
 use serde::Deserialize;
@@ -107,13 +106,13 @@ pub struct UpdateUserData {
     password: Option<String>,
 }
 
-pub fn update(conn: &PgConnection, id: i32, data: &UpdateUserData) -> Option<User> {
+pub fn update(conn: &Conn, id: i32, data: &UpdateUserData) -> Option<User> {
     let data = &UpdateUserData {
         password: None,
         ..data.clone()
     };
     diesel::update(users::table.find(id))
         .set(data)
-        .get_result(conn)
+        .get_result(conn.deref())
         .ok()
 }
