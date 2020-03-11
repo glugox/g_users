@@ -78,14 +78,19 @@ pub fn post_users_login(
         .ok_or_else(|| Errors::new(&[("email or password", "is invalid")]))
 }
 
+#[get("/users")]
+pub fn get_users(_key: ApiKey, conn: db::Conn) -> Option<JsonValue> {
+    db::users::find(&conn).map(|user| json!(user))
+}
+
 #[get("/users/<id>")]
 pub fn get_user(_key: ApiKey, id: i32, conn: db::Conn) -> Option<JsonValue> {
-    db::users::find(&conn, id).map(|user| json!({ "user": user }))
+    db::users::find_one(&conn, id).map(|user| json!({ "user": user }))
 }
 
 #[get("/me")]
 pub fn get_me(auth: Auth, conn: db::Conn, state: State<AppState>) -> Option<JsonValue> {
-    db::users::find(&conn, auth.id).map(|user| json!({ "user": user.to_user_auth(&state.secret) }))
+    db::users::find_one(&conn, auth.id).map(|user| json!({ "user": user.to_user_auth(&state.secret) }))
 }
 
 #[derive(Deserialize)]

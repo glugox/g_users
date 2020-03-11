@@ -121,6 +121,21 @@ fn test_get_me() {
 }
 
 #[test]
+/// Check that `/users` endpoint returns expected data.
+fn test_get_users() {
+    let client = test_client();
+    let token = login(&client);
+    let dummy_user = generate_random_user_data();
+    let user_id = register(client, dummy_user.username.as_ref(), dummy_user.email.as_ref(), dummy_user.password.as_ref());
+    let path = "/api/users";
+    let response = &mut client.get(path).header(api_header(token)).dispatch();
+
+
+    let value = response_json_value(response);
+    let user = value.get("users").expect("must have a 'users' field");
+}
+
+#[test]
 /// Check that `/users/<id>` endpoint returns expected data.
 fn test_get_user() {
     let client = test_client();

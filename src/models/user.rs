@@ -15,6 +15,11 @@ pub struct User {
     pub hash: String,
 }
 
+#[derive(Queryable, Serialize)]
+pub struct UserList {
+    pub users: Vec<User>,
+}
+
 #[derive(Serialize)]
 pub struct UserAuth<'a> {
     id: i32,

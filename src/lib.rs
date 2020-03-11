@@ -57,6 +57,7 @@ pub fn rocket() -> rocket::Rocket {
                 routes::users::post_users,
                 routes::users::post_users_login,
                 routes::users::put_user,
+                routes::users::get_users,
                 routes::users::get_user,
                 routes::users::get_me,
                 routes::users::delete_user,

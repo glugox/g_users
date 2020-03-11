@@ -1,5 +1,5 @@
 use crate::db::Conn;
-use crate::models::user::User;
+use crate::models::user::{User, UserList};
 use crate::schema::users;
 use std::ops::Deref;
 
@@ -7,6 +7,7 @@ use crypto::scrypt::{scrypt_check, scrypt_simple, ScryptParams};
 use diesel::prelude::*;
 use diesel::result::{DatabaseErrorKind, Error};
 use serde::Deserialize;
+use rocket_contrib::json::Json;
 
 #[derive(Insertable)]
 #[table_name = "users"]
@@ -77,7 +78,18 @@ pub fn login(conn: &Conn, email: &str, password: &str) -> Option<User> {
     }
 }
 
-pub fn find(conn: &Conn, id: i32) -> Option<User> {
+pub fn find(conn: &Conn) -> Option<UserList> {
+
+    let users : Vec<User> = users::table.load::<User>(conn.deref())
+        .map_err(|err| println!("Can not load users!: {}", err))
+        .unwrap();
+
+    Some(UserList{
+        users
+    })
+}
+
+pub fn find_one(conn: &Conn, id: i32) -> Option<User> {
     users::table
         .find(id)
         .get_result(conn.deref())
