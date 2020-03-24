@@ -23,7 +23,7 @@ struct NewUserData {
     password: Option<String>,
 }
 
-#[post("/users", format = "json", data = "<new_user>")]
+#[post("/", format = "json", data = "<new_user>")]
 pub fn post_users(
     new_user: Json<NewUser>,
     conn: db::Conn,
@@ -60,7 +60,7 @@ struct LoginUserData {
     password: Option<String>,
 }
 
-#[post("/users/login", format = "json", data = "<user>")]
+#[post("/login", format = "json", data = "<user>")]
 pub fn post_users_login(
     user: Json<LoginUser>,
     conn: db::Conn,
@@ -78,12 +78,12 @@ pub fn post_users_login(
         .ok_or_else(|| Errors::new(&[("email or password", "is invalid")]))
 }
 
-#[get("/users")]
+#[get("/")]
 pub fn get_users(_key: ApiKey, conn: db::Conn) -> Option<JsonValue> {
     db::users::find(&conn).map(|user| json!(user))
 }
 
-#[get("/users/<id>")]
+#[get("/<id>")]
 pub fn get_user(_key: ApiKey, id: i32, conn: db::Conn) -> Option<JsonValue> {
     db::users::find_one(&conn, id).map(|user| json!({ "user": user }))
 }
@@ -98,7 +98,7 @@ pub struct UpdateUser {
     user: db::users::UpdateUserData,
 }
 
-#[put("/users", format = "json", data = "<user>")]
+#[put("/", format = "json", data = "<user>")]
 pub fn put_user(
     user: Json<UpdateUser>,
     auth: Auth,
@@ -109,7 +109,7 @@ pub fn put_user(
         .map(|user| json!({ "user": user.to_user_auth(&state.secret) }))
 }
 
-#[delete("/users/<id>")]
+#[delete("/<id>")]
 pub fn delete_user(id: i32, _auth: Auth, conn: db::Conn) {
     db::users::delete(&conn, id);
 }

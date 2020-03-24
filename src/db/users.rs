@@ -7,7 +7,6 @@ use crypto::scrypt::{scrypt_check, scrypt_simple, ScryptParams};
 use diesel::prelude::*;
 use diesel::result::{DatabaseErrorKind, Error};
 use serde::Deserialize;
-use rocket_contrib::json::Json;
 
 #[derive(Insertable)]
 #[table_name = "users"]

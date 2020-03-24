@@ -52,7 +52,7 @@ pub fn load_env(env: Option<Environment>) {
 pub fn rocket() -> rocket::Rocket {
     rocket::custom(config::from_env())
         .mount(
-            "/api",
+            "/",
             routes![
                 routes::users::post_users,
                 routes::users::post_users_login,
